@@ -27,7 +27,7 @@ flags.DEFINE_float('iou', 0.45, 'iou threshold')
 flags.DEFINE_float('score', 0.25, 'score threshold')
 
 
-def pred_dir(score=0.45):
+def main(_argv):
 
     config = ConfigProto()
     config.gpu_options.allow_growth = True
@@ -82,3 +82,11 @@ def pred_dir(score=0.45):
             cv2.imwrite("./pred_result/" + img, image)
             print(img,exist_classes)
             out_list.append([img, exist_classes])
+
+
+
+if __name__ == '__main__':
+    try:
+        app.run(main)
+    except SystemExit:
+        pass
