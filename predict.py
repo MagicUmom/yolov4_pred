@@ -15,18 +15,19 @@ from tensorflow.compat.v1 import InteractiveSession
 import os
 import pandas as pd
 
+flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
+flags.DEFINE_string('weights', './weights/yolov4-416',
+                    'path to weights file')
+flags.DEFINE_integer('size', 416, 'resize images to')
+flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
+flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
+flags.DEFINE_string('image', './pred_data', 'path to input image')
+flags.DEFINE_string('output', 'result.png', 'path to output image')
+flags.DEFINE_float('iou', 0.45, 'iou threshold')
+flags.DEFINE_float('score', 0.25, 'score threshold')
 
 
 def pred_dir(score=0.45):
-    flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
-    flags.DEFINE_string('weights', './weights/yolov4-416',
-                        'path to weights file')
-    flags.DEFINE_integer('size', 416, 'resize images to')
-    flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
-    flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
-    flags.DEFINE_string('image', './pred_data', 'path to input image')
-    flags.DEFINE_string('output', 'result.png', 'path to output image')
-    flags.DEFINE_float('iou', 0.45, 'iou threshold')
 
     config = ConfigProto()
     config.gpu_options.allow_growth = True
@@ -70,7 +71,7 @@ def pred_dir(score=0.45):
                 max_output_size_per_class=50,
                 max_total_size=50,
                 iou_threshold=FLAGS.iou,
-                score_threshold=score
+                score_threshold=FLAGS.score
             )
             pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
             image, exist_classes = utils.draw_bbox(original_image, pred_bbox)
