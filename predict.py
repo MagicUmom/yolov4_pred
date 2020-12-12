@@ -16,36 +16,27 @@ import os
 import pandas as pd
 
 
-# flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
-# flags.DEFINE_string('weights', './weights/yolov4-416',
-#                     'path to weights file')
-# flags.DEFINE_integer('size', 416, 'resize images to')
-# flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
-# flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
-# flags.DEFINE_string('image', './pred_data', 'path to input image')
-# flags.DEFINE_string('output', 'result.png', 'path to output image')
-# flags.DEFINE_float('iou', 0.45, 'iou threshold')
 
-flags_framework = 'tf'
-flags_weights = './weights/yolov4-416'
-flags_size = 416
-flags_tiny = False
-flags_model = 'yolov4'
-flags_image = './pred_data'
-flags_output = 'result.png'
-flags_iou = 0.45
-flags_score = 0.5
+def pred_dir(score=0.45):
+    flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
+    flags.DEFINE_string('weights', './weights/yolov4-416',
+                        'path to weights file')
+    flags.DEFINE_integer('size', 416, 'resize images to')
+    flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
+    flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
+    flags.DEFINE_string('image', './pred_data', 'path to input image')
+    flags.DEFINE_string('output', 'result.png', 'path to output image')
+    flags.DEFINE_float('iou', 0.45, 'iou threshold')
 
-def pred_dir(score=0.25):
     config = ConfigProto()
     config.gpu_options.allow_growth = True
     session = InteractiveSession(config=config)
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
-    input_size = flags_size
-    image_dir_path = flags_image
+    input_size = FLAGS.size
+    image_dir_path = FLAGS.image
 
     print("loading Model ...")
-    saved_model_loaded = tf.saved_model.load(flags_weights, tags=[tag_constants.SERVING])
+    saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
     infer = saved_model_loaded.signatures['serving_default']
 
     imgs = os.listdir(image_dir_path)
@@ -78,8 +69,8 @@ def pred_dir(score=0.25):
                     pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
                 max_output_size_per_class=50,
                 max_total_size=50,
-                iou_threshold=flags_iou,
-                score_threshold=flags_score
+                iou_threshold=FLAGS.iou,
+                score_threshold=score
             )
             pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
             image, exist_classes = utils.draw_bbox(original_image, pred_bbox)
