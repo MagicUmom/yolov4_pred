@@ -41,7 +41,7 @@ def main(_argv):
     infer = saved_model_loaded.signatures['serving_default']
 
     imgs = os.listdir(image_dir_path)
-    out_list = []
+    # out_list = []
     for img in imgs:
         if img.split(".")[-1] == 'jpg' or img.split(".")[-1] == 'png' :
       
@@ -80,8 +80,9 @@ def main(_argv):
             image.show()
             image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
             cv2.imwrite("./pred_result/" + img, image)
-            print(img,exist_classes)
-            out_list.append([img, exist_classes])
+            # print(img,exist_classes)
+            # out_list.append([img, exist_classes])
+            print(img)
 
 
 
